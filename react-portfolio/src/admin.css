@@ -1,0 +1,692 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --bg-primary: #0a0a1a;
+    --bg-secondary: #111128;
+    --bg-card: rgba(255, 255, 255, 0.04);
+    --bg-card-hover: rgba(255, 255, 255, 0.07);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-active: rgba(108, 99, 255, 0.4);
+    --text-primary: #f0f0f0;
+    --text-secondary: #999;
+    --text-muted: #666;
+    --accent: #6C63FF;
+    --accent-light: #00D4FF;
+    --gradient: linear-gradient(135deg, #6C63FF, #00D4FF);
+    --danger: #ff4b4b;
+    --success: #10b981;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+.admin-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top Bar */
+.admin-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(20px);
+}
+
+.admin-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-topbar-left svg {
+    color: var(--accent);
+}
+
+.admin-topbar-left h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    background: var(--gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.admin-badge {
+    background: rgba(108, 99, 255, 0.15);
+    color: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.admin-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-email {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.admin-btn-icon {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.admin-btn-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border-color: var(--border-active);
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Main Content */
+.admin-main {
+    flex: 1;
+    padding: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Loading & Empty States */
+.admin-loading-screen,
+.admin-empty-state,
+.admin-error-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    min-height: 60vh;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.admin-error-screen svg {
+    color: var(--danger);
+}
+
+.admin-error-screen h2 {
+    color: var(--text-primary);
+}
+
+.admin-btn-primary {
+    padding: 10px 24px;
+    background: var(--gradient);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: opacity 0.2s;
+}
+
+.admin-btn-primary:hover {
+    opacity: 0.85;
+}
+
+.admin-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* User Cards Grid */
+.admin-users-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.admin-user-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.admin-user-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-active);
+}
+
+.admin-user-card.expanded {
+    border-color: var(--border-active);
+}
+
+.user-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.user-card-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.user-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-card-info h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.user-card-username {
+    color: var(--accent-light);
+    font-size: 0.8rem;
+}
+
+.user-card-stats {
+    display: flex;
+    gap: 12px;
+}
+
+.user-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.user-card-toggle {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: color 0.2s;
+}
+
+.user-card-toggle:hover {
+    color: var(--text-primary);
+}
+
+/* User Details */
+.user-card-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 8px;
+    padding: 0 24px 16px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.detail-item svg {
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
+/* Chat Sessions */
+.user-card-chats {
+    border-top: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chats-loading,
+.chats-empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 24px;
+    font-size: 0.85rem;
+}
+
+.chat-session-block {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.chat-session-title {
+    padding: 12px 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent-light);
+    background: rgba(108, 99, 255, 0.08);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease;
+}
+
+.chat-session-title:hover {
+    background: rgba(108, 99, 255, 0.15);
+}
+
+.session-open .chat-session-title {
+    background: rgba(108, 99, 255, 0.18);
+}
+
+.session-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chat-session-msgs {
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.chat-session-msgs::-webkit-scrollbar {
+    width: 5px;
+}
+
+.chat-session-msgs::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-session-msgs::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 3px;
+}
+
+.chat-msg {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.chat-msg.user {
+    background: rgba(108, 99, 255, 0.1);
+    border: 1px solid rgba(108, 99, 255, 0.15);
+}
+
+.chat-msg.assistant,
+.chat-msg.model {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+}
+
+.chat-msg-content {
+    flex: 1;
+    word-break: break-word;
+}
+
+.chat-msg-model {
+    font-size: 0.7rem;
+    margin-top: 6px;
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+.chat-msg-time {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Scrollbar */
+.user-card-chats::-webkit-scrollbar {
+    width: 6px;
+}
+
+.user-card-chats::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.user-card-chats::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+/* Tabs */
+.admin-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 32px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 56px;
+    z-index: 99;
+}
+
+.admin-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 24px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.admin-tab:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.admin-tab.active {
+    color: var(--accent-light);
+    border-bottom-color: var(--accent);
+}
+
+.tab-count {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.tab-count.unread {
+    background: var(--danger);
+    color: #fff;
+}
+
+/* Session message count */
+.session-msg-count {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Delete Button */
+.delete-btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    margin-left: 8px;
+    transition: all 0.2s ease;
+}
+
+.delete-btn-icon:hover {
+    color: #ff4757;
+    background: rgba(255, 71, 87, 0.1);
+}
+
+/* Chat message role emoji */
+.chat-msg-role {
+    flex-shrink: 0;
+    font-size: 1rem;
+    line-height: 1;
+    margin-top: 2px;
+}
+
+/* Small spinner */
+.admin-spinner.small {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.chats-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Contact Messages */
+.admin-messages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.contact-msg-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.contact-msg-card.unread {
+    border-left: 3px solid var(--accent);
+    background: rgba(108, 99, 255, 0.04);
+}
+
+.contact-msg-card.read {
+    opacity: 0.75;
+}
+
+.contact-msg-card:hover {
+    background: var(--bg-card-hover);
+}
+
+.contact-msg-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    gap: 16px;
+}
+
+.contact-msg-sender {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.contact-msg-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.contact-msg-sender h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.contact-msg-email {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.contact-msg-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.contact-msg-date {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.mark-read-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--success);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.mark-read-btn:hover {
+    background: rgba(16, 185, 129, 0.2);
+}
+
+.read-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.contact-msg-body {
+    padding: 0 20px 20px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+    margin: 0 20px;
+    margin-bottom: 0;
+    padding-bottom: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-topbar {
+        padding: 12px 16px;
+    }
+
+    .admin-tabs {
+        padding: 0 16px;
+    }
+
+    .admin-main {
+        padding: 16px;
+    }
+
+    .user-card-header {
+        flex-wrap: wrap;
+        padding: 16px;
+    }
+
+    .user-card-stats {
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .user-card-details {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-email {
+        display: none;
+    }
+
+    .contact-msg-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .contact-msg-meta {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
