@@ -22,6 +22,17 @@ const connectToDatabase = async () => {
     return cachedDb;
 };
 
+// --- DB CONNECTION MIDDLEWARE (ensures DB is ready for every route) ---
+app.use(async (req, res, next) => {
+    try {
+        await connectToDatabase();
+        next();
+    } catch (err) {
+        console.error('Database connection failed:', err);
+        res.status(500).json({ error: 'Database connection failed' });
+    }
+});
+
 const ADMIN_EMAILS = (process.env.ADMIN_EMAIL || '').toLowerCase().split(',').map(e => e.trim());
 
 const transporter = nodemailer.createTransport({
@@ -108,7 +119,7 @@ app.post('/api/verify-email', async (req, res) => {
 
         user.otp = null;
         user.otpExpiry = null;
-        user.emailVerified = true; // email is confirmed, but registration not complete
+        user.emailVerified = true;
         await user.save();
 
         res.json({ message: 'Email verified successfully!' });
@@ -282,10 +293,10 @@ app.post('/api/chat/generate', async (req, res) => {
             body: requestBody
         });
 
-        // Silent fallback to gemini-3.1-flash-lite if out of tokens (429)
+        // Silent fallback to gemini-2.0-flash-lite if out of tokens (429)
         if (response.status === 429) {
-            usedModel = 'gemini-3.1-flash-lite';
-            response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${API_KEY}`, {
+            usedModel = 'gemini-2.0-flash-lite';
+            response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${API_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: requestBody
@@ -448,6 +459,5 @@ app.delete('/api/admin/contact-messages/:id', requireAdmin, async (req, res) => 
 const handler = serverless(app);
 module.exports.handler = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
-    await connectToDatabase();
     return await handler(event, context);
 };
