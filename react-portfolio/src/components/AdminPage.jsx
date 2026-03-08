@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Users, MessageCircle, Clock, Mail, Phone, User, ChevronDown, ChevronUp, Shield, LogOut, RefreshCw, Inbox, CheckCircle, Eye, Trash2 } from 'lucide-react';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = '/api';
 
 const AdminPage = () => {
     const [adminEmail, setAdminEmail] = useState(null);
