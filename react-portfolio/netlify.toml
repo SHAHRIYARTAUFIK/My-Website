@@ -1,8 +1,15 @@
+[build]
+  command = "npm run build"
+  functions = "netlify/functions"
+  publish = "dist"
+
+# Route all frontend API calls to the serverless function
 [[redirects]]
-  from = "/admin"
-  to = "/admin.html"
+  from = "/api/*"
+  to = "/.netlify/functions/api"
   status = 200
 
+# Support for React Router client-side navigation
 [[redirects]]
   from = "/*"
   to = "/index.html"

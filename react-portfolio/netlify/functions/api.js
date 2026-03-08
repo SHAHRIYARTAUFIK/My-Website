@@ -1,25 +1,29 @@
-require('dotenv').config();
+const serverless = require('serverless-http');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
-const User = require('./models/User');
-const ChatLog = require('./models/ChatLog');
-const ContactMessage = require('./models/ContactMessage');
+
+// Correct relative paths to your existing models
+const User = require('../../server/models/User');
+const ChatLog = require('../../server/models/ChatLog');
+const ContactMessage = require('../../server/models/ContactMessage');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// --- DATABASE CONNECTION CACHING ---
+let cachedDb = null;
+const connectToDatabase = async () => {
+    if (cachedDb && mongoose.connection.readyState === 1) return cachedDb;
+    cachedDb = await mongoose.connect(process.env.MONGODB_URI);
+    return cachedDb;
+};
+
 const ADMIN_EMAILS = (process.env.ADMIN_EMAIL || '').toLowerCase().split(',').map(e => e.trim());
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('✅ MongoDB Connected'))
-    .catch(err => console.error('❌ MongoDB Error:', err));
-
-// Email Transporter
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -28,10 +32,8 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-// Generate 6-digit OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-// OTP Email Template
 const sendOTPEmail = async (to, otp, subject = '🔐 Your Verification OTP Code') => {
     await transporter.sendMail({
         from: `"Shahriyar's Portfolio" <${process.env.EMAIL_USER}>`,
@@ -40,13 +42,9 @@ const sendOTPEmail = async (to, otp, subject = '🔐 Your Verification OTP Code'
         html: `
             <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 480px; margin: 0 auto; background: linear-gradient(135deg, #0a0a1e 0%, #1a1a3e 100%); border-radius: 16px; padding: 40px; color: #fff;">
                 <h2 style="text-align: center; background: linear-gradient(135deg, #6C63FF, #00D4FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;">Shahriyar's Portfolio</h2>
-                <p style="text-align: center; color: #aaa; font-size: 14px; margin-bottom: 30px;">Verification Code</p>
                 <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 28px; text-align: center; margin-bottom: 24px;">
-                    <p style="color: #ccc; margin: 0 0 12px 0;">Your OTP code is:</p>
                     <h1 style="letter-spacing: 12px; font-size: 36px; margin: 0; color: #fff;"><b>${otp}</b></h1>
                 </div>
-                <p style="text-align: center; color: #888; font-size: 13px;">This code expires in <strong style="color: #00d4ff;">10 minutes</strong>.</p>
-                <p style="text-align: center; color: #666; font-size: 12px; margin-top: 24px;">If you didn't request this, please ignore this email.</p>
             </div>
         `,
     });
@@ -446,6 +444,10 @@ app.delete('/api/admin/contact-messages/:id', requireAdmin, async (req, res) => 
     }
 });
 
-// Start Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+// --- SERVERLESS EXPORT ---
+const handler = serverless(app);
+module.exports.handler = async (event, context) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+    await connectToDatabase();
+    return await handler(event, context);
+};
