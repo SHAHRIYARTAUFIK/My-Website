@@ -49,7 +49,7 @@ const Chatbot = ({ loggedInUser, setLoggedInUser, setShowAuthModal }) => {
     const saveChatToServer = async () => {
         if (!loggedInUser || messages.length <= 1) return;
         try {
-            await fetch('http://localhost:5000/api/chat/save', {
+            await fetch('/api/chat/save', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -111,7 +111,7 @@ const Chatbot = ({ loggedInUser, setLoggedInUser, setShowAuthModal }) => {
             }));
 
             // Call the local backend API instead of Google APIs directly
-            const response = await fetch('http://localhost:5000/api/chat/generate', {
+            const response = await fetch('/api/chat/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
